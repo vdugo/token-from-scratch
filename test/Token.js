@@ -12,20 +12,27 @@ describe("Token", () => {
 
         // fetch token from the blockchain
         const Token = await ethers.getContractFactory("Token")
-        token = await Token.deploy()
+        token = await Token.deploy('Vince Coin', 'VIN', 1000000)
     })
 
-    it("has the correct name", async () => {
-        expect(await token.name()).to.equal('Vince Coin')
+    describe('Deployment', async () => {
+        const name = 'Vince Coin'
+        const symbol = 'VIN'
+        const decimals = '18'
+        const totalSupply = tokens('1000000')
+
+        it("has the correct name", async () => {
+            expect(await token.name()).to.equal(name)
+        })
+        it("has the correct symbol", async () => {
+            expect(await token.symbol()).to.equal(symbol)
+        })
+        it("has the correct number for decimals", async () => {
+            expect(await token.decimals()).to.equal(decimals)
+        })
+        it("has the correct total supply", async () => {
+            expect(await token.totalSupply()).to.equal(totalSupply)
+        })
     })
-    it("has the correct symbol", async () => {
-        expect(await token.symbol()).to.equal('VIN')
-    })
-    it("has the correct number for decimals", async () => {
-        expect(await token.decimals()).to.equal('18')
-    })
-    it("has the correct total supply", async () => {
-        const value = tokens('1000000')
-        expect(await token.totalSupply()).to.equal(value)
-    })
+
 })
