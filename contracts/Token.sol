@@ -22,5 +22,14 @@ contract Token
         // give the deployer of the contract the entire supply of tokens at first
         balanceOf[msg.sender] = totalSupply;
     }
+    
+    function transfer(address _to, uint256 _value) public returns(bool success)
+    {
+        require(balanceOf[msg.sender] >= _value, "insufficient token balance");
+        // deduct tokens from spender
+        balanceOf[msg.sender] -= _value;
+        // credit tokens to receiver
+        balanceOf[_to] += _value;
+    }
 
 }
