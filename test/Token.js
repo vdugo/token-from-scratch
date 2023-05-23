@@ -9,6 +9,7 @@ describe("Token", () => {
     let token
     let accounts
     let deployer
+    let receiver
     beforeEach(async () => {
         // code that gets executed before each one of these tests
 
@@ -16,10 +17,11 @@ describe("Token", () => {
         const Token = await ethers.getContractFactory("Token")
         token = await Token.deploy('Vince Coin', 'VIN', 1000000)
         accounts = await ethers.getSigners()
-        deployer = accounts[0].address
+        deployer = accounts[0]
+        receiver = accounts[1]
     })
 
-    describe('Deployment', async () => {
+    describe('Deployment', () => {
         const name = 'Vince Coin'
         const symbol = 'VIN'
         const decimals = '18'
@@ -38,7 +40,21 @@ describe("Token", () => {
             expect(await token.totalSupply()).to.equal(totalSupply)
         })
         it("assigns the total supply to the deployer", async () => {
-            expect(await token.balanceOf(deployer)).to.equal(totalSupply)
+            expect(await token.balanceOf(deployer.address)).to.equal(totalSupply)
+        })
+    })
+
+    describe('Sending tokens', () => {
+        let amount, transaction, result
+        it('Transfers token balances', async () => {
+            // transfer tokens
+            amount = tokens(100)
+            transaction = await token.connect(deployer).transfer(receiver.address, amount)
+            result = await transaction.wait()
+
+            // ensure that tokens were transferred, balances changed correctly
+            expect(await token.balanceOf(deployer.address)).to.equal(tokens(999900))
+            expect(await token.balanceOf(receiver.address)).to.equal(amount)
         })
     })
 
