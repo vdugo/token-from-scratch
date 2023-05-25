@@ -66,8 +66,15 @@ contract Token
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success)
     {
-        require(allowance[msg.sender][_from] >= _value, "insufficient allowance");
+        require(_value <= balanceOf[_from]);
+        require(allowance[_from][msg.sender] >= _value);
+
+        // Reset allowance
+        allowance[_from][msg.sender] -= _value;
+
+        _transfer(_from, _to, _value);
         
+        return true;
     }
 
 }
